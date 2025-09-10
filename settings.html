@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Battery Alert Settings</title>
+    <style>
+      body {
+        font-family: -apple-system, sans-serif;
+        padding: 20px;
+      }
+      label {
+        display: block;
+        margin-top: 10px;
+      }
+      input {
+        width: 60px;
+      }
+      button {
+        margin-top: 20px;
+        padding: 5px 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <h2>Battery Alert Settings</h2>
+
+    <label>
+      Low Battery Threshold:
+      <input type="number" id="lowThreshold" min="1" max="100" />
+    </label>
+
+    <label>
+      High Battery Threshold:
+      <input type="number" id="highThreshold" min="1" max="100" />
+    </label>
+
+    <label style="margin-top: 15px; display: block;">
+      <input type="checkbox" id="startAtLogin" />
+      Start at login
+    </label>
+
+    <button id="saveBtn">Save</button>
+
+    <script>
+      window.onload = async () => {
+        const settings = await window.electronAPI.getSettings();
+        document.getElementById("lowThreshold").value = settings.lowThreshold;
+        document.getElementById("highThreshold").value = settings.highThreshold;
+
+        const startAtLogin = await window.electronAPI.getLoginItem();
+        document.getElementById("startAtLogin").checked = startAtLogin;
+      };
+
+      document.getElementById("saveBtn").addEventListener("click", async () => {
+        const low = parseInt(document.getElementById("lowThreshold").value, 10);
+        const high = parseInt(document.getElementById("highThreshold").value, 10);
+
+        await window.electronAPI.saveSettings({ low, high });
+
+        const startAtLogin = document.getElementById("startAtLogin").checked;
+        await window.electronAPI.setLoginItem(startAtLogin);
+
+        window.close();
+      });
+    </script>
+  </body>
+</html>
