@@ -2,7 +2,6 @@ const { app, Menu, Tray, BrowserWindow, Notification, ipcMain } = require("elect
 const { exec } = require("child_process");
 const path = require("path");
 const Store = require("electron-store").default;
-const notifier = require("node-notifier");
 
 const store = new Store({
   defaults: {
@@ -82,14 +81,11 @@ function checkBattery() {
 }
 
 function triggerAlert(title, message) {
+  // Show native macOS notification
   new Notification({ title, body: message }).show();
 
-  notifier.notify({
-    title,
-    message,
-    sound: true,
-    wait: false
-  });
+  // Play system sound
+  //exec('afplay /System/Library/Sounds/Glass.aiff');
 }
 
 // ---------------- IPC Handlers ----------------
